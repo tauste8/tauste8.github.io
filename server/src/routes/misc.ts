@@ -88,7 +88,7 @@ stats.get("/dashboard", async (req, res) => {
     one(`SELECT count(*)::int AS searches, count(*) FILTER (WHERE status='completado')::int AS ok, coalesce(round(avg(duration_ms)),0)::int AS avg_ms
          FROM searches WHERE created_at >= date_trunc('day', now())`),
     query(`SELECT s.id, s.query_vehicle, s.query_part, s.query_ref, s.part_code, s.status, s.count_oem, s.count_iam, s.count_cat, s.created_at, u.name AS user_name,
-             v.make, v.model, v.plate FROM searches s LEFT JOIN users u ON u.id=s.user_id LEFT JOIN vehicles v ON v.id=s.vehicle_id
+             v.make, v.model, v.plate, v.vin FROM searches s LEFT JOIN users u ON u.id=s.user_id LEFT JOIN vehicles v ON v.id=s.vehicle_id
            ORDER BY s.created_at DESC LIMIT 8`),
     query(`SELECT q.id, q.number, q.status, q.created_at, c.name AS customer_name FROM quotes q LEFT JOIN customers c ON c.id=q.customer_id
            WHERE q.status IN ('borrador','enviado') ORDER BY q.updated_at DESC LIMIT 6`),

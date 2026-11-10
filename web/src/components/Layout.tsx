@@ -86,7 +86,7 @@ export function Layout() {
           <Button className="menu-btn" variant="ghost" iconOnly icon={<Menu size={20} />} onClick={() => setOpen(true)} aria-label="Abrir menú" />
           <div className="crumb">AUTORECA IA / <b>{current?.label ?? ""}</b></div>
           <div className="grow" />
-          {loc.pathname !== "/buscador" && (
+          {loc.pathname !== "/buscador" && loc.pathname !== "/" && (
             <NavLink to="/buscador" className="btn btn-primary btn-sm"><ScanSearch size={15} />Buscar recambio</NavLink>
           )}
         </header>

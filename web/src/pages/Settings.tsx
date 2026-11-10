@@ -166,7 +166,7 @@ function Synonyms() {
         {q.data?.length ? <table className="table"><tbody>{q.data.map((s) => (
           <tr key={s.id}><td className="strong">{s.term}</td><td>→ {s.part_name}</td><td className="small dim">{s.user_name}</td>
             <td className="right">{user?.role === "admin" && <Button size="sm" variant="ghost" iconOnly icon={<Trash2 size={14} />} onClick={async () => { await api.del(`/settings/synonyms/${s.id}`); q.refetch(); }} aria-label="Eliminar" />}</td></tr>
-        ))}</tbody></table> : <div className="card-body small dim">Sin sinónimos propios. El diccionario base ya reconoce más de 300 denominaciones.</div>}
+        ))}</tbody></table> : <div className="card-body small dim">Sin sinónimos propios. El diccionario base reconoce 60 tipos de pieza y más de 230 denominaciones.</div>}
       </Card>
     </div>
   );

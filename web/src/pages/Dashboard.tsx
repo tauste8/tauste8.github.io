@@ -47,7 +47,7 @@ export function DashboardPage() {
                 <tbody>
                   {d.recent.map((s: any) => (
                     <tr key={s.id} className="clickable" onClick={() => nav(`/buscador?h=${s.id}`)}>
-                      <td><div className="mono strong">{s.plate ?? s.query_vehicle ?? "—"}</div><div className="tiny dim">{[s.make, s.model].filter(Boolean).join(" ")}</div></td>
+                      <td><div className="mono strong">{s.plate ?? s.vin ?? s.query_vehicle ?? "—"}</div><div className="tiny dim">{[s.make, s.model].filter(Boolean).join(" ")}</div></td>
                       <td>{s.part_name ?? s.query_part ?? s.query_ref ?? "—"}</td>
                       <td><span className="row" style={{ gap: 6 }}><Badge>A {s.count_oem}</Badge><Badge>B {s.count_iam}</Badge><Badge>C {s.count_cat}</Badge></span></td>
                       <td className="small muted">{s.user_name}</td>
@@ -87,14 +87,14 @@ export function DashboardPage() {
         <Card title="Presupuestos abiertos" icon={<FileText size={16} color="var(--lime)" />} pad={false} actions={<Link to="/presupuestos" className="btn btn-sm btn-ghost">Todos</Link>}>
           {d.pendingQuotes.length ? (
             <table className="table"><tbody>{d.pendingQuotes.map((x: any) => (
-              <tr key={x.id} className="clickable" onClick={() => nav(`/presupuestos/${x.id}`)}><td className="mono">{x.number}</td><td className="small">{x.customer_name ?? "—"}</td><td className="right"><StatusBadge status={x.status} /></td></tr>
+              <tr key={x.id} className="clickable" onClick={() => nav(`/presupuestos/${x.id}`)}><td className="mono nowrap">{x.number}</td><td className="small">{x.customer_name ?? "—"}</td><td className="right"><StatusBadge status={x.status} /></td></tr>
             ))}</tbody></table>
           ) : <Empty icon={<FileText size={20} />} title="Sin presupuestos abiertos">Cree presupuestos desde los resultados del buscador.</Empty>}
         </Card>
         <Card title="Pedidos en curso" icon={<Truck size={16} color="var(--lime)" />} pad={false} actions={<Link to="/pedidos" className="btn btn-sm btn-ghost">Todos</Link>}>
           {d.openOrders.length ? (
             <table className="table"><tbody>{d.openOrders.map((x: any) => (
-              <tr key={x.id} className="clickable" onClick={() => nav(`/pedidos/${x.id}`)}><td className="mono">{x.number}</td><td className="small">{x.customer_name ?? "—"}</td><td className="right"><StatusBadge status={x.status} /></td></tr>
+              <tr key={x.id} className="clickable" onClick={() => nav(`/pedidos/${x.id}`)}><td className="mono nowrap">{x.number}</td><td className="small">{x.customer_name ?? "—"}</td><td className="right"><StatusBadge status={x.status} /></td></tr>
             ))}</tbody></table>
           ) : <Empty icon={<Truck size={20} />} title="Sin pedidos en curso">Los presupuestos aceptados se convierten en pedidos.</Empty>}
         </Card>

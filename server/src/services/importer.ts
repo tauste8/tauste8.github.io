@@ -267,7 +267,7 @@ export async function importRows(source: SourceRow, rows: Record<string, string>
     await c.query(
       `UPDATE data_sources SET last_sync_at=now(), status=CASE WHEN $2::int > 0 THEN 'activo' ELSE status END,
          last_error=$3, updated_at=now() WHERE id=$1`,
-      [source.id, ok, errors.length ? `${errors.length} filas con errores en la última importación` : null],
+      [source.id, ok, errors.length ? `${errors.length} fila(s) con errores en la última importación` : null],
     );
   });
   return { total: rows.length, ok, errors };

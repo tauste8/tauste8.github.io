@@ -153,7 +153,7 @@ function ItemForm({ initial, onClose }: { initial: any; onClose: () => void }) {
           <Field label="SKU interno"><input className="input mono" value={f.sku} onChange={set("sku")} /></Field>
           <Field label="Precio de compra (€)"><input className="input" inputMode="decimal" value={f.purchase_price} onChange={set("purchase_price")} /></Field>
           <Field label="Precio de venta (€)" hint={margin != null && Number.isFinite(margin) ? `Margen ${margin.toFixed(1)} %` : undefined}><input className="input" inputMode="decimal" value={f.sale_price} onChange={set("sale_price")} /></Field>
-          <Field label="Cantidad">
+          <Field label="Cantidad" plain={!!initial.id}>
             {initial.id ? (
               <div className="row"><Button iconOnly icon={<Minus size={14} />} onClick={() => adjust(-1)} disabled={Number(f.quantity) <= 0} aria-label="Restar" /><b style={{ minWidth: 30, textAlign: "center" }}>{f.quantity}</b><Button iconOnly icon={<Plus size={14} />} onClick={() => adjust(1)} aria-label="Sumar" /></div>
             ) : <input className="input" inputMode="numeric" value={f.quantity} onChange={set("quantity")} />}

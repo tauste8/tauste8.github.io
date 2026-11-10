@@ -1,5 +1,5 @@
 import { AlertTriangle, CheckCircle2, Info, Search as SearchIcon, X, XCircle } from "lucide-react";
-import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
+import { cloneElement, createContext, isValidElement, useCallback, useContext, useEffect, useId, useRef, useState, type ReactElement, type ReactNode } from "react";
 import type { CompatStatus } from "../lib/types";
 
 // ───────── Botón ─────────
@@ -21,11 +21,29 @@ export function Button({ variant = "default", size, icon, loading, iconOnly, chi
 }
 
 // ───────── Formularios ─────────
-export function Field({ label, hint, children, className = "" }: { label?: ReactNode; hint?: ReactNode; children: ReactNode; className?: string }) {
+export function Field({ label, hint, children, className = "", plain }: { label?: ReactNode; hint?: ReactNode; children: ReactNode; className?: string; plain?: boolean }) {
+  const autoId = useId();
+  // Un único control (input/select/textarea): se asocia con htmlFor/id. Si el control va dentro de un
+  // contenedor, la etiqueta lo envuelve. En ambos casos la ayuda queda fuera del nombre accesible.
+  const single = isValidElement(children) && typeof children.type === "string" && ["input", "select", "textarea"].includes(children.type);
+  if (single) {
+    const el = children as ReactElement<{ id?: string }>;
+    const id = el.props.id ?? autoId;
+    return (
+      <div className={`field ${className}`}>
+        {label && <label className="field-label" htmlFor={id}>{label}</label>}
+        {cloneElement(el, { id })}
+        {hint && <span className="hint">{hint}</span>}
+      </div>
+    );
+  }
+  const Inner = plain ? "div" : "label";
   return (
     <div className={`field ${className}`}>
-      {label && <label>{label}</label>}
-      {children}
+      <Inner className="field-main">
+        {label && <span className="field-label">{label}</span>}
+        {children}
+      </Inner>
       {hint && <span className="hint">{hint}</span>}
     </div>
   );
