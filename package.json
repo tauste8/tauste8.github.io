@@ -1,0 +1,17 @@
+{
+  "name": "autoreca-ia",
+  "private": true,
+  "version": "1.0.0",
+  "description": "AUTORECA IA — plataforma de búsqueda y gestión inteligente de recambios de automóvil",
+  "workspaces": ["server", "web"],
+  "scripts": {
+    "dev:server": "npm run dev -w server",
+    "dev:web": "npm run dev -w web",
+    "build": "npm run build -w server && npm run build -w web",
+    "start": "npm run start -w server",
+    "migrate": "npm run migrate -w server",
+    "test": "npm run test -w server",
+    "typecheck": "npm run typecheck -w server && npm run typecheck -w web"
+  },
+  "engines": { "node": ">=20" }
+}
