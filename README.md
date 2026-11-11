@@ -95,6 +95,10 @@ La primera vez que abra la aplicación le pedirá crear la cuenta de **administr
 
 > **No puede ejecutarse en GitHub Pages.** GitHub Pages solo sirve archivos estáticos, y AUTORECA IA necesita un servidor Node.js y una base de datos PostgreSQL. Despliéguela en un servidor propio, un VPS o un servicio con contenedores.
 
+### Probarla desde el iPad sin instalar nada — GitHub Codespaces
+
+En la página del repositorio en GitHub: **Code → Codespaces → Create codespace**. Al terminar de prepararse (unos minutos), la aplicación arranca sola con su base de datos. Se abre desde la pestaña **Ports → 3000** (icono del globo). Es para probarla: el codespace se detiene tras un rato sin uso y GitHub limita las horas gratuitas al mes.
+
 ### Opción rápida desde el navegador (iPad) — Render
 
 El repositorio incluye `render.yaml`. Siga la guía **[docs/DESPLIEGUE-RENDER.md](docs/DESPLIEGUE-RENDER.md)**: se crea la cuenta, se elige el repositorio y Render construye la base de datos y la aplicación con HTTPS.

@@ -1,0 +1,12 @@
+{
+  "name": "AUTORECA IA",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "postCreateCommand": "npm ci && npm run build",
+  "postStartCommand": "bash .devcontainer/start.sh",
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": { "label": "AUTORECA IA", "onAutoForward": "openBrowser" }
+  }
+}
