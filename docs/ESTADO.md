@@ -58,7 +58,7 @@ Ningún conector se simula y no se usa *scraping*. Si un conector con licencia n
 - **NHTSA vPIC** (decodificador público de VIN de EE. UU.): implementado con la API pública, pero el entorno de desarrollo no tenía salida a ese dominio, así que no se ha probado contra el servicio real. Viene **desactivado** por defecto; actívelo y pulse «Probar conexión» en Integraciones. Para vehículos europeos suele devolver solo la marca.
 - **Asistente de IA (Claude):** implementado con salida estructurada. Solo puede elegir tipos de pieza del diccionario y nunca genera referencias, precios ni compatibilidades. No se ha probado con una clave real. Se activa con `ANTHROPIC_API_KEY`. Sin clave, la búsqueda por foto se muestra como no disponible y el resto funciona igual.
 - **Envío de correo (SMTP):** implementado con nodemailer, sin probar contra un servidor real.
-- **Imagen Docker:** `Dockerfile` y `docker-compose.yml` incluidos, pero no se pudieron construir aquí (no había Docker disponible). La compilación y la instalación limpia (`npm ci && npm run build`) sí se han comprobado.
+- **Imagen Docker y Render:** `Dockerfile`, `docker-compose.yml` y `render.yaml` incluidos, pero no se pudieron construir aquí (no había Docker disponible ni acceso a la documentación de Render). Sí se han comprobado la instalación limpia, la compilación y el arranque en modo producción con solo las dependencias de producción, que es lo mismo que hace la imagen.
 
 ## Próximos pasos recomendados
 

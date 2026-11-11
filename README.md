@@ -95,7 +95,11 @@ La primera vez que abra la aplicación le pedirá crear la cuenta de **administr
 
 > **No puede ejecutarse en GitHub Pages.** GitHub Pages solo sirve archivos estáticos, y AUTORECA IA necesita un servidor Node.js y una base de datos PostgreSQL. Despliéguela en un servidor propio, un VPS o un servicio con contenedores.
 
-### Opción A — Docker Compose (recomendada)
+### Opción rápida desde el navegador (iPad) — Render
+
+El repositorio incluye `render.yaml`. Siga la guía **[docs/DESPLIEGUE-RENDER.md](docs/DESPLIEGUE-RENDER.md)**: se crea la cuenta, se elige el repositorio y Render construye la base de datos y la aplicación con HTTPS.
+
+### Opción A — Docker Compose (servidor propio)
 
 ```bash
 cp .env.example .env
@@ -132,12 +136,11 @@ NODE_ENV=production DATABASE_URL=… APP_ENCRYPTION_KEY=… PUBLIC_URL=… node 
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` | No | Correo para recuperar la contraseña. Sin SMTP, un administrador genera el enlace desde Configuración → Usuarios |
 | `ANTHROPIC_API_KEY` | No | Activa el asistente de IA (interpretación de denominaciones y búsqueda por foto) |
 | `AI_MODEL` | No | Modelo de Claude (por defecto `claude-opus-5-5`) |
-| `UPLOADS_DIR` | No | Carpeta de fotografías (por defecto `./data/uploads`) |
 | `SESSION_DAYS`, `PORT` | No | Duración de la sesión (7 días) y puerto (3000) |
 
 ### Copias de seguridad
 
-- **Automáticas:** `scripts/backup.sh` hace `pg_dump` de la base de datos y un archivo de las fotografías, y conserva 30 días. Prográmelo con `cron`; dentro del script están las instrucciones y el comando de restauración.
+- **Automáticas:** `scripts/backup.sh` hace `pg_dump` de la base de datos (las fotografías se guardan dentro de ella) y conserva 30 días. Prográmelo con `cron`; dentro del script están las instrucciones y el comando de restauración.
 - **Manual:** en Configuración → Sistema y seguridad → «Descargar copia ahora» (JSON sin contraseñas ni credenciales).
 
 ## Primeros pasos tras instalar

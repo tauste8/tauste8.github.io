@@ -8,7 +8,7 @@ import { pool, query } from "./db/pool.js";
 async function main() {
   await migrate();
   await ensureConnectorRows();
-  await mkdir(config.uploadsDir, { recursive: true });
+  await mkdir(config.uploadsDir, { recursive: true }).catch(() => {}); // solo para fotos antiguas en disco
   // Limpieza periódica de sesiones y enlaces caducados
   setInterval(() => {
     query(`DELETE FROM sessions WHERE expires_at < now()`).catch(() => {});

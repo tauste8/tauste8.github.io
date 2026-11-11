@@ -22,7 +22,8 @@ export const config = {
   port: Number(env("PORT", "3000")),
   databaseUrl: env("DATABASE_URL", "postgres://postgres@127.0.0.1:5432/autoreca"),
   encryptionKey,
-  publicUrl: env("PUBLIC_URL", "http://localhost:3000"),
+  // Render define RENDER_EXTERNAL_URL automáticamente
+  publicUrl: process.env.PUBLIC_URL || process.env.RENDER_EXTERNAL_URL || "http://localhost:3000",
   uploadsDir: env("UPLOADS_DIR", "./data/uploads"),
   sessionDays: Number(env("SESSION_DAYS", "7")),
   smtp: {

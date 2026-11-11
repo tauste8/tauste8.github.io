@@ -160,7 +160,7 @@ settings.get("/backup", requireAdmin, async (req, res) => {
   try {
     await client.query("BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY");
     for (const t of tables) {
-      const cols = t === "users" ? "id, email, name, role, active, last_login_at, created_at, updated_at" : t === "data_sources" ? "id, connector_key, name, data_kind, supplier_id, enabled, verified_source, config, status, last_sync_at, created_at" : "*";
+      const cols = t === "files" ? "id, original_name, mime, size_bytes, created_by, created_at" : t === "users" ? "id, email, name, role, active, last_login_at, created_at, updated_at" : t === "data_sources" ? "id, connector_key, name, data_kind, supplier_id, enabled, verified_source, config, status, last_sync_at, created_at" : "*";
       out[t] = (await client.query(`SELECT ${cols} FROM ${t}`)).rows;
     }
     await client.query("COMMIT");
@@ -171,7 +171,7 @@ settings.get("/backup", requireAdmin, async (req, res) => {
   const stamp = new Date().toISOString().replace(/[:T]/g, "-").slice(0, 16);
   res.setHeader("Content-Type", "application/json");
   res.setHeader("Content-Disposition", `attachment; filename="autoreca-copia-${stamp}.json"`);
-  res.send(JSON.stringify({ app: "AUTORECA IA", version: 1, exportedAt: new Date().toISOString(), note: "Las contraseñas y credenciales de integraciones no se incluyen.", data: out }));
+  res.send(JSON.stringify({ app: "AUTORECA IA", version: 1, exportedAt: new Date().toISOString(), note: "Las contraseñas, las credenciales de integraciones y el contenido de las fotografías no se incluyen (use la copia de PostgreSQL para una copia completa).", data: out }));
 });
 
 // ───────── Archivos ─────────
@@ -179,9 +179,12 @@ export const files = Router();
 files.get("/:id", async (req, res) => {
   const f = await one(`SELECT * FROM files WHERE id=$1`, [String(req.params.id)]);
   if (!f) throw notFound("Archivo");
-  if (!/^[a-f0-9-]+\.(jpg|png|webp)$/.test(f.storage_name)) throw new HttpError(400, "Archivo no válido");
+  if (!["image/jpeg", "image/png", "image/webp"].includes(f.mime)) throw new HttpError(400, "Archivo no válido");
   res.setHeader("Content-Type", f.mime);
   res.setHeader("Cache-Control", "private, max-age=86400");
   res.setHeader("X-Content-Type-Options", "nosniff");
+  if (f.data) { res.send(f.data); return; }
+  // Archivos antiguos guardados en disco
+  if (!f.storage_name || !/^[a-f0-9-]+\.(jpg|png|webp)$/.test(f.storage_name)) throw notFound("Archivo");
   res.sendFile(path.resolve(config.uploadsDir, f.storage_name));
 });

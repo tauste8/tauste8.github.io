@@ -27,9 +27,6 @@ services:
       DATABASE_URL: postgres://autoreca:${POSTGRES_PASSWORD}@db:5432/autoreca
     ports:
       - "${APP_PORT:-3000}:3000"
-    volumes:
-      - uploads:/data/uploads
 
 volumes:
   pgdata:
-  uploads:

@@ -1,6 +1,5 @@
-import { mkdir, unlink, writeFile } from "node:fs/promises";
+import { unlink } from "node:fs/promises";
 import path from "node:path";
-import { randomUUID } from "node:crypto";
 import { Router } from "express";
 import multer from "multer";
 import { z } from "zod";
@@ -124,7 +123,7 @@ router.delete("/:id", requireAdmin, async (req, res) => {
   if (!r.rowCount) throw notFound("Pieza");
   for (const p of photos.rows) {
     await query(`DELETE FROM files WHERE id=$1`, [p.id]);
-    await unlink(path.join(config.uploadsDir, p.storage_name)).catch(() => {});
+    if (p.storage_name) await unlink(path.join(config.uploadsDir, p.storage_name)).catch(() => {});
   }
   await audit(req, "inventario.baja", "inventory", String(req.params.id));
   res.json({ ok: true });
@@ -137,7 +136,6 @@ router.post("/:id/photos", upload.array("photos", 6), async (req, res) => {
   if (!item) throw notFound("Pieza");
   const files = (req.files as Express.Multer.File[]) ?? [];
   if (!files.length) throw new HttpError(400, "Adjunte al menos una fotografía");
-  await mkdir(config.uploadsDir, { recursive: true });
   const ids: string[] = [];
   for (const f of files) {
     const ext = IMAGE_TYPES[f.mimetype];
@@ -146,10 +144,8 @@ router.post("/:id/photos", upload.array("photos", 6), async (req, res) => {
     const sig = f.buffer.subarray(0, 12);
     const ok = (ext === ".jpg" && sig[0] === 0xff && sig[1] === 0xd8) || (ext === ".png" && sig[0] === 0x89 && sig[1] === 0x50) || (ext === ".webp" && sig.toString("ascii", 8, 12) === "WEBP");
     if (!ok) throw new HttpError(400, `El archivo ${f.originalname} no es una imagen válida`);
-    const storage = `${randomUUID()}${ext}`;
-    await writeFile(path.join(config.uploadsDir, storage), f.buffer);
-    const r = await one(`INSERT INTO files (original_name, mime, size_bytes, storage_name, created_by) VALUES ($1,$2,$3,$4,$5) RETURNING id`, [
-      f.originalname.slice(0, 200), f.mimetype, f.size, storage, req.user!.id,
+    const r = await one(`INSERT INTO files (original_name, mime, size_bytes, data, created_by) VALUES ($1,$2,$3,$4,$5) RETURNING id`, [
+      f.originalname.slice(0, 200), f.mimetype, f.size, f.buffer, req.user!.id,
     ]);
     await query(`INSERT INTO inventory_photos (item_id, file_id, position) VALUES ($1,$2,(SELECT coalesce(max(position)+1,0) FROM inventory_photos WHERE item_id=$1))`, [item.id, r.id]);
     ids.push(r.id);
@@ -162,6 +158,6 @@ router.delete("/:id/photos/:fileId", async (req, res) => {
   const f = await one(`SELECT f.id, f.storage_name FROM inventory_photos p JOIN files f ON f.id=p.file_id WHERE p.item_id=$1 AND p.file_id=$2`, [String(req.params.id), String(req.params.fileId)]);
   if (!f) throw notFound("Fotografía");
   await query(`DELETE FROM files WHERE id=$1`, [f.id]);
-  await unlink(path.join(config.uploadsDir, f.storage_name)).catch(() => {});
+  if (f.storage_name) await unlink(path.join(config.uploadsDir, f.storage_name)).catch(() => {});
   res.json({ ok: true });
 });
