@@ -23,7 +23,9 @@ export const config = {
   databaseUrl: env("DATABASE_URL", "postgres://postgres@127.0.0.1:5432/autoreca"),
   encryptionKey,
   // Render define RENDER_EXTERNAL_URL automáticamente
-  publicUrl: process.env.PUBLIC_URL || process.env.RENDER_EXTERNAL_URL || "http://localhost:3000",
+  // Railway define RAILWAY_PUBLIC_DOMAIN
+  publicUrl: process.env.PUBLIC_URL || process.env.RENDER_EXTERNAL_URL ||
+    (process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : "http://localhost:3000"),
   uploadsDir: env("UPLOADS_DIR", "./data/uploads"),
   sessionDays: Number(env("SESSION_DAYS", "7")),
   smtp: {
