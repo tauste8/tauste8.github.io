@@ -20,7 +20,8 @@ const encryptionKey = isProd
 export const config = {
   isProd,
   port: Number(env("PORT", "3000")),
-  databaseUrl: env("DATABASE_URL", "postgres://postgres@127.0.0.1:5432/autoreca"),
+  // En producción es obligatoria: si falta (p. ej. una referencia mal escrita en Railway) se avisa claramente.
+  databaseUrl: isProd ? env("DATABASE_URL") : env("DATABASE_URL", "postgres://postgres@127.0.0.1:5432/autoreca"),
   encryptionKey,
   // Render define RENDER_EXTERNAL_URL automáticamente
   // Railway define RAILWAY_PUBLIC_DOMAIN
