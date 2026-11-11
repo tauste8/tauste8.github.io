@@ -11,6 +11,30 @@ function env(name: string, fallback?: string): string {
 
 const isProd = process.env.NODE_ENV === "production";
 
+/**
+ * Dirección de PostgreSQL. Acepta DATABASE_URL y los nombres alternativos que usan algunos
+ * proveedores, o las variables sueltas PGHOST/PGUSER/PGPASSWORD/PGDATABASE/PGPORT.
+ * En producción, si no hay ninguna, se detiene con un mensaje claro.
+ */
+function resolveDatabaseUrl(): string {
+  for (const k of ["DATABASE_URL", "DATABASE_PRIVATE_URL", "POSTGRES_URL", "POSTGRESQL_URL"]) {
+    const v = process.env[k]?.trim();
+    if (v) return v;
+  }
+  const { PGHOST, PGUSER, PGPASSWORD, PGDATABASE, PGPORT } = process.env;
+  if (PGHOST && PGUSER) {
+    const auth = encodeURIComponent(PGUSER) + (PGPASSWORD ? ":" + encodeURIComponent(PGPASSWORD) : "");
+    return `postgres://${auth}@${PGHOST}:${PGPORT || "5432"}/${encodeURIComponent(PGDATABASE || PGUSER)}`;
+  }
+  if (isProd) {
+    throw new Error(
+      "Falta la conexión a la base de datos: defina DATABASE_URL (o PGHOST, PGUSER, PGPASSWORD, PGDATABASE). " +
+        `Variables de base de datos presentes: ${Object.keys(process.env).filter((k) => /^(PG|DATABASE|POSTGRES)/.test(k)).join(", ") || "ninguna"}`,
+    );
+  }
+  return "postgres://postgres@127.0.0.1:5432/autoreca";
+}
+
 // En producción la clave de cifrado es obligatoria: sin ella no se podrían descifrar
 // las credenciales de integraciones tras un reinicio.
 const encryptionKey = isProd
@@ -20,8 +44,7 @@ const encryptionKey = isProd
 export const config = {
   isProd,
   port: Number(env("PORT", "3000")),
-  // En producción es obligatoria: si falta (p. ej. una referencia mal escrita en Railway) se avisa claramente.
-  databaseUrl: isProd ? env("DATABASE_URL") : env("DATABASE_URL", "postgres://postgres@127.0.0.1:5432/autoreca"),
+  databaseUrl: resolveDatabaseUrl(),
   encryptionKey,
   // Render define RENDER_EXTERNAL_URL automáticamente
   // Railway define RAILWAY_PUBLIC_DOMAIN
